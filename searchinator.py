@@ -29,7 +29,7 @@ def getFileContent(pathAndFileName):
 # api_key = getFileContent({}/'telegram_api_key.txt'.format(dir_path))
 
 
-updater = Updater(token='', use_context=True)
+updater = Updater('')
 dispatcher = updater.dispatcher
 
 def getdata(que):
@@ -54,21 +54,23 @@ def getdata(que):
 
 
 
-def start(update, context):
-    context.bot.send_message(chat_id=update.message.chat_id, text="I'm a bot, please talk to me!")
+def start_callback(bot, update, args):
+#     update.message.reply_text("Welcome to my awesome bot!")
+    user_says = " ".join(args)
+    print(user_says)
+    update.message.reply_text("You said: " + user_says)
 
-start_handler = CommandHandler('start', start)
-dispatcher.add_handler(start_handler)
+dispatcher.add_handler(CommandHandler("start", start_callback, pass_args=True))
 
-def fetch(update, context):
-    text_fetch = ' '.join(context.args)
+def fetch(bot, update, args):
+    text_fetch = ' '.join(args)
     d = getdata(text_fetch)
-    context.bot.send_message(chat_id=update.message.chat_id, text=d['titles'][0])
-    context.bot.send_message(chat_id=update.message.chat_id, text=d['links'][0])
-    print(d['links'][0])
+    bot.send_message(chat_id=update.message.chat_id, text=d['titles'][0])
+    bot.send_message(chat_id=update.message.chat_id, text=d['links'][0])
+    print(d['titles'], end='\n')
+   # print(d['links'], end='\n \n')
 
-
-caps_handler = CommandHandler('fetch', fetch)
+caps_handler = CommandHandler('fetch', fetch, pass_args=True)
 dispatcher.add_handler(caps_handler)
 
 def forward(update, context):
